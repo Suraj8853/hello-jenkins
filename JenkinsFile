@@ -1,0 +1,38 @@
+/* groovylint-disable-next-line CompileStatic */
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build and Clean') {
+            steps {
+                sh 'mvn clean package'
+            }
+
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Archive artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build suceeeded 🚀🚀 🥳🥳🥳'
+        }
+        failure {
+            echo 'Build failed ❌❌😵😵'
+        }
+    }
+}

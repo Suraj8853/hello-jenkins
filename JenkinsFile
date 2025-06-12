@@ -4,6 +4,11 @@ pipeline {
     tools{
         maven 'maven-3.9.10'
     }
+    parameters{
+        string(name:'Greeting', defaultValue:'Hellooo jenkins', description:'just a greeting term')
+        booleanParams(name:'RUN_EXTRA_TESTS', defaultValue:false, description:'to run extra tests')
+        choice(name:'env', choices:['Dev','Staging','Prod'])
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -12,12 +17,28 @@ pipeline {
         }
         stage('Build and Clean') {
             steps {
+                echo "Greeting is ${params.Greeting}"
                 sh 'mvn clean package'
+                script {
+                    /* groovylint-disable-next-line NestedBlockDepth */
+                    if (params.RUN_EXTRA_TESTS) {
+                        sh 'mvn verify -Pintegration-tests'
+                    }
+                }
             }
 
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                expression { params.env != dev }
+                steps {
+                    echo "deploying to ${params.env}"
                 }
             }
         }

@@ -17,11 +17,13 @@ pipeline {
         }
 
         stage('Test Suites') {
-           
                 parallel {
                     stage('Intergration Tests') {
+                        steps {
                         echo 'Running Intergration tests'
                         sh 'mvn verify -Pintegration-tests -DskipTests'
+                        }
+
                         post {
                             always {
                                 junit '**/target/failsafe-reports/*.xml'
@@ -30,8 +32,11 @@ pipeline {
                     }
 
                     stage('Unit Tets') {
+                        steps {
                         echo 'Running Unit tests'
                         sh 'mvn clean test -DskipITs'
+                        }
+
                         post {
                             always {
                                 junit '**/target/surefire-reports/*.xml'
@@ -39,7 +44,6 @@ pipeline {
                         }
                     }
                 }
-            
         }
         stage('Deploy') {
             when {

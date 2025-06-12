@@ -17,23 +17,25 @@ pipeline {
         }
 
         stage('Test Suites') {
-            parallel {
-                stage('Intergration Tests') {
-                    echo 'Running Intergration tests'
-                    sh 'mvn verify -Pintegration-tests -DskipTests'
-                    post {
-                        always {
-                            junit '**/target/failsafe-reports/*.xml'
+            steps {
+                parallel {
+                    stage('Intergration Tests') {
+                        echo 'Running Intergration tests'
+                        sh 'mvn verify -Pintegration-tests -DskipTests'
+                        post {
+                            always {
+                                junit '**/target/failsafe-reports/*.xml'
+                            }
                         }
                     }
-                }
 
-                stage('Unit Tets') {
-                    echo 'Running Unit tests'
-                    sh 'mvn clean test -DskipITs'
-                    post {
-                        always {
-                            junit '**/target/surefire-reports/*.xml'
+                    stage('Unit Tets') {
+                        echo 'Running Unit tests'
+                        sh 'mvn clean test -DskipITs'
+                        post {
+                            always {
+                                junit '**/target/surefire-reports/*.xml'
+                            }
                         }
                     }
                 }

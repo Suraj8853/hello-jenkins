@@ -6,7 +6,7 @@ pipeline {
     }
     parameters{
         string(name:'Greeting', defaultValue:'Hellooo jenkins', description:'just a greeting term')
-        booleanParams(name:'RUN_EXTRA_TESTS', defaultValue:false, description:'to run extra tests')
+        booleanParam(name:'RUN_EXTRA_TESTS', defaultValue:false, description:'to run extra tests')
         choice(name:'env', choices:['Dev', 'Staging', 'Prod'])
     }
     stages {
@@ -37,10 +37,12 @@ pipeline {
         stage('Deploy') {
             when {
                 expression { params.env != dev }
-                steps {
+              
+            }
+
+              steps {
                     echo "deploying to ${params.env}"
                 }
-            }
         }
 
         stage('Archive artifacts') {

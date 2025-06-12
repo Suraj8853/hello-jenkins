@@ -1,10 +1,10 @@
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
     agent any
-    tools{
+    tools {
         maven 'maven-3.9.10'
     }
-    parameters{
+    parameters {
         string(name:'Greeting', defaultValue:'Hellooo jenkins', description:'just a greeting term')
         booleanParam(name:'RUN_EXTRA_TESTS', defaultValue:false, description:'to run extra tests')
         choice(name:'env', choices:['dev', 'staging', 'prod'])
@@ -15,34 +15,38 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build and Clean') {
-            steps {
-                echo "Greeting is ${params.Greeting}"
-                sh 'mvn clean package'
-                script {
-                    /* groovylint-disable-next-line NestedBlockDepth */
-                    if (params.RUN_EXTRA_TESTS) {
-                        sh 'mvn verify -Pintegration-tests'
+
+        stage('Test Suites') {
+            parallel {
+                stage('Intergration Tests') {
+                    echo 'Running Intergration tests'
+                    sh 'mvn verify -Pintegration-tests -DskipTests'
+                    post {
+                        always {
+                            junit '**/target/failsafe-reports/*.xml'
+                        }
+                    }
+                }
+
+                stage('Unit Tets') {
+                    echo 'Running Unit tests'
+                    sh 'mvn clean test -DskipITs'
+                    post {
+                        always {
+                            junit '**/target/surefire-reports/*.xml'
+                        }
                     }
                 }
             }
-
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
         }
-
         stage('Deploy') {
             when {
                 expression { params.env != 'dev' }
-              
             }
 
-              steps {
+            steps {
                     echo "deploying to ${params.env}"
-                }
+            }
         }
 
         stage('Archive artifacts') {

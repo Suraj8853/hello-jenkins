@@ -7,7 +7,7 @@ pipeline {
     parameters{
         string(name:'Greeting', defaultValue:'Hellooo jenkins', description:'just a greeting term')
         booleanParam(name:'RUN_EXTRA_TESTS', defaultValue:false, description:'to run extra tests')
-        choice(name:'env', choices:['Dev', 'Staging', 'Prod'])
+        choice(name:'env', choices:['dev', 'staging', 'prod'])
     }
     stages {
         stage('Checkout') {

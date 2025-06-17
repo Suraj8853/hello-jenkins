@@ -1,6 +1,10 @@
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
     agent none
+    options {
+        // skip the default “Declarative: Checkout SCM” so we control exactly where checkouts happen
+        skipDefaultCheckout()
+    }
     tools {
         maven 'maven-3.9.10'
     }

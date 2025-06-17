@@ -1,6 +1,6 @@
 /* groovylint-disable-next-line CompileStatic */
 pipeline {
-    agent any
+    agent none
     tools {
         maven 'maven-3.9.10'
     }
@@ -19,6 +19,7 @@ pipeline {
         stage('Test Suites') {
                 parallel {
                     stage('Intergration Tests') {
+                        agent any
                         steps {
                         echo 'Running Intergration tests'
                         sh 'mvn verify -Pintegration-tests -DskipTests'
@@ -32,6 +33,7 @@ pipeline {
                     }
 
                     stage('Unit Tets') {
+                        agent any
                         steps {
                         echo 'Running Unit tests'
                         sh 'mvn clean test -DskipITs'

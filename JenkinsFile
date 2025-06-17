@@ -80,7 +80,7 @@ pipeline {
         }
 
         always {
-            emailext(to: 'surajpai8853@gmail.com', subject: "${currentBuild.currentResult}:Job:${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            emailext(to: 'surajpai8853@gmail.com,suraj.pai@dhruvts.com', subject: "${currentBuild.currentResult}:Job:${env.JOB_NAME} #${env.BUILD_NUMBER}",
            body: """Build ${env.JOB_NAME}:${env.BUILD_NUMBER} finished with status of ${currentBuild.currentResult}
 Console Output: ${env.BUILD_URL}console
 Pipeline view : ${env.BUILD_URL} """

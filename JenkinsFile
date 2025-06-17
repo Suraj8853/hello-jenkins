@@ -22,36 +22,36 @@ pipeline {
         }
 
         stage('Test Suites') {
-                parallel {
-                    stage('Intergration Tests') {
-                        agent any
-                        steps {
-                        echo 'Running Intergration tests'
-                        sh 'mvn verify -Pintegration-tests -DskipTests'
-                        }
-
-                        post {
-                            always {
-                                junit '**/target/failsafe-reports/*.xml'
-                            }
-                        }
+            parallel {
+                stage('Integration Tests') {
+                    agent any
+                    when {
+                        expression { params.RUN_EXTRA_TESTS }
                     }
-
-                    stage('Unit Tets') {
-                        agent any
-                        steps {
-                        echo 'Running Unit tests'
-                        sh 'mvn clean test -DskipITs'
-                        }
-
-                        post {
-                            always {
-                                junit '**/target/surefire-reports/*.xml'
-                            }
+                    steps {
+                        checkout scm
+                        sh 'mvn clean verify -Pintegration-tests -DskipTests'
+                    }
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
                         }
                     }
                 }
+                stage('Unit Tests') {
+                    agent any
+                    /* groovylint-disable-next-line NestedBlockDepth */
+                    steps {
+                        checkout scm
+                        sh 'mvn clean test'
+                    }
+                    post {
+                        always { junit '**/target/surefire-reports/*.xml' }
+                    }
+                }
+            }
         }
+
         stage('Deploy') {
             agent any
             when {

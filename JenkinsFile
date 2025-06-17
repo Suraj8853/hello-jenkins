@@ -15,6 +15,7 @@ pipeline {
     }
     stages {
         stage('Checkout') {
+            agent any
             steps {
                 checkout scm
             }
@@ -52,6 +53,7 @@ pipeline {
                 }
         }
         stage('Deploy') {
+            agent any
             when {
                 expression { params.env != 'dev' }
             }
@@ -62,6 +64,7 @@ pipeline {
         }
 
         stage('Archive artifacts') {
+            agent any
             steps {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }

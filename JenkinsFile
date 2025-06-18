@@ -16,7 +16,9 @@ pipeline {
     stages {
 
         stage('shared') {
-
+          steps {
+            sayHello('Suraj')
+          }
         }
         stage('Checkout') {
             agent any

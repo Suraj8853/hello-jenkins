@@ -1,4 +1,4 @@
-/* groovylint-disable-next-line CompileStatic */
+@Library('my-shared-lib')
 pipeline {
     agent none
     options {
@@ -14,6 +14,10 @@ pipeline {
         choice(name:'env', choices:['dev', 'staging', 'prod'])
     }
     stages {
+
+        stage('shared') {
+
+        }
         stage('Checkout') {
             agent any
             steps {
@@ -83,6 +87,7 @@ pipeline {
             emailext(to: 'surajpai8853@gmail.com,suraj.pai@dhruvts.com', subject: "${currentBuild.currentResult}:Job:${env.JOB_NAME} #${env.BUILD_NUMBER}",
            body: """Build ${env.JOB_NAME}:${env.BUILD_NUMBER} finished with status of ${currentBuild.currentResult}
 Console Output: ${env.BUILD_URL}console
+
 Pipeline view : ${env.BUILD_URL} """
            )
         }

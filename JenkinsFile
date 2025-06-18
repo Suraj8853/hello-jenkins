@@ -1,4 +1,4 @@
-@Library('my-shared-lib')
+
 pipeline {
     agent none
     options {
@@ -17,7 +17,10 @@ pipeline {
 
         stage('shared') {
           steps {
-            sayHello('Suraj')
+            script {
+                @Library('my-shared-lib')
+                sayHello('suraj')
+            }
           }
         }
         stage('Checkout') {

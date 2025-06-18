@@ -16,6 +16,7 @@ pipeline {
     stages {
 
         stage('shared') {
+            agent any
           steps {
             script {
                 @Library('my-shared-lib')
